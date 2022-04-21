@@ -17,7 +17,7 @@ const {
 const userRoutes = require('./routes/users');
 const cardRoutes = require('./routes/cards');
 
-const { NOT_FOUND_ERROR_CODE, NotFoundError } = require('./errors/NotFound');
+const { NotFoundError } = require('./errors/NotFound');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
