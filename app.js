@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const helmet = require('helmet');
 const { isUrlMethod } = require('./custom_rules/isUrlMethod');
+const { limiter } = require('./middlewares/limiter');
 
 const auth = require('./middlewares/auth');
 
@@ -23,6 +24,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 const app = express();
 const { PORT = 3000 } = process.env;
 
+app.use(limiter);
 app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
