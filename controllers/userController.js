@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const { NotFoundError } = require('../errors/NotFound');
 const { ConflictError } = require('../errors/Conflict');
@@ -14,7 +15,7 @@ module.exports.login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const user = await User.findUserByCredentials(email, password);
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', {
       expiresIn: 3600,
     });
     return res
