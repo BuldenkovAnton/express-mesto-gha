@@ -10,6 +10,10 @@ const { ValidationError } = require('../errors/ValidationError');
 
 const User = require('../models/user');
 
+module.exports.logout = (req, res) => {
+  res.clearCookie('jwtToken').send({ message: 'Выход' });
+};
+
 module.exports.login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -19,7 +23,7 @@ module.exports.login = async (req, res, next) => {
     });
     return res
       .cookie('jwtToken', token, { maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: true })
-      .send({});
+      .send({ message: 'Пользователь успешно авторизован' });
   } catch (err) {
     return next(err);
   }
@@ -33,10 +37,6 @@ module.exports.getUsers = (req, res, next) => {
 
 module.exports.getUserById = async (req, res, next) => {
   try {
-    if (!req.params.userId || !mongoose.Types.ObjectId.isValid(req.params.userId)) {
-      throw new ValidationError('Переданы некорректные данные пользователя');
-    }
-
     const user = await User.findById(req.params.userId);
     if (!user) throw new NotFoundError('Пользователь не найден');
 

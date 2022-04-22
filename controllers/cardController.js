@@ -31,10 +31,6 @@ module.exports.createCard = async (req, res, next) => {
 
 module.exports.deleteCardById = async (req, res, next) => {
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
-      throw new ValidationError('Переданы некорректные данные при удалении карточки');
-    }
-
     const card = await Card.findById(req.params.cardId);
     if (!card) throw new NotFoundError('Карточка не найден');
 
@@ -55,10 +51,6 @@ module.exports.deleteCardById = async (req, res, next) => {
 module.exports.addCardLike = async (req, res, next) => {
   try {
     const { _id: userId } = req.user;
-
-    if (!req.params.cardId || !mongoose.Types.ObjectId.isValid(req.params.cardId)) {
-      throw new ValidationError('Переданы некорректные данные для добавления лайка');
-    }
 
     const card = await Card.findByIdAndUpdate(
       req.params.cardId,
@@ -84,10 +76,6 @@ module.exports.addCardLike = async (req, res, next) => {
 module.exports.removeCardLike = async (req, res, next) => {
   try {
     const { _id: userId } = req.user;
-
-    if (!req.params.cardId || !mongoose.Types.ObjectId.isValid(req.params.cardId)) {
-      throw new ValidationError('Переданы некорректные данные для удаления лайка');
-    }
 
     const card = await Card.findByIdAndUpdate(
       req.params.cardId,

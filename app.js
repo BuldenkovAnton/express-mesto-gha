@@ -10,11 +10,12 @@ const { isUrlMethod } = require('./custom_rules/isUrlMethod');
 
 const { limiter } = require('./middlewares/limiter');
 const auth = require('./middlewares/auth');
+const { handleError } = require('./middlewares/errors');
 
 const userRoutes = require('./routes/users');
 const cardRoutes = require('./routes/cards');
 
-const { login, createUser } = require('./controllers/userController');
+const { login, createUser, logout } = require('./controllers/userController');
 
 const { NotFoundError } = require('./errors/NotFound');
 
@@ -32,7 +33,7 @@ app.use(bodyParser.json());
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),
-    password: Joi.string().required().min(6),
+    password: Joi.string().required(),
   }),
 }), login);
 
@@ -42,23 +43,17 @@ app.post('/signup', celebrate({
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().custom(isUrlMethod, 'url not valid'),
     email: Joi.string().email().required(),
-    password: Joi.string().required().min(6),
+    password: Joi.string().required(),
   }),
 }), createUser);
 
+app.get('/signout', auth, logout);
+
 app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardRoutes);
-app.use('*', (req, res, next) => next(new NotFoundError('Страница не найдена')));
+app.use('*', auth, (req, res, next) => next(new NotFoundError('Страница не найдена')));
 
 app.use(errors());
-
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res
-    .status(statusCode)
-    .send({ message: message === 500 ? 'Произошла ошибка' : message });
-
-  next();
-});
+app.use(handleError);
 
 app.listen(PORT);
