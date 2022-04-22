@@ -6,7 +6,6 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 
 const { NotFoundError } = require('../errors/NotFound');
 const { ConflictError } = require('../errors/Conflict');
-
 const { ValidationError } = require('../errors/ValidationError');
 
 const User = require('../models/user');
@@ -65,17 +64,10 @@ module.exports.getMyProfile = async (req, res, next) => {
 
 module.exports.createUser = async (req, res, next) => {
   try {
-    const {
-      name, about, avatar, email, password,
-    } = req.body;
-
-    const hash = await bcrypt.hash(password, 10);
+    const hash = await bcrypt.hash(req.body.password, 10);
 
     const user = await User.create({
-      name: name || undefined,
-      about: about || undefined,
-      avatar: avatar || undefined,
-      email,
+      ...req.body,
       password: hash,
     });
 
@@ -103,13 +95,11 @@ module.exports.createUser = async (req, res, next) => {
 module.exports.updateUserProfile = async (req, res, next) => {
   try {
     const { _id: userId } = req.user;
-    const { name, about } = req.body;
 
     const user = await User.findByIdAndUpdate(
       userId,
       {
-        name: name || undefined,
-        about: about || undefined,
+        ...req.body,
       },
       { runValidators: true, new: true },
     );
@@ -128,12 +118,11 @@ module.exports.updateUserProfile = async (req, res, next) => {
 
 module.exports.updateUserAvatar = async (req, res, next) => {
   try {
-    const { avatar } = req.body;
     const { _id: userId } = req.user;
 
     const user = await User.findByIdAndUpdate(
       userId,
-      { avatar },
+      { ...req.body },
       { runValidators: true, new: true },
     );
 

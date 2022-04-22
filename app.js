@@ -1,21 +1,20 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
-const { celebrate, Joi, errors } = require('celebrate');
+
+const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
+
+const { celebrate, Joi, errors } = require('celebrate');
 const { isUrlMethod } = require('./custom_rules/isUrlMethod');
+
 const { limiter } = require('./middlewares/limiter');
-
 const auth = require('./middlewares/auth');
-
-const {
-  login,
-  createUser,
-} = require('./controllers/userController');
 
 const userRoutes = require('./routes/users');
 const cardRoutes = require('./routes/cards');
+
+const { login, createUser } = require('./controllers/userController');
 
 const { NotFoundError } = require('./errors/NotFound');
 
