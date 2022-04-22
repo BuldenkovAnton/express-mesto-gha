@@ -43,6 +43,14 @@ const getUserByIdSchema = Joi.object({
   userId: Joi.string().length(24).hex().required(),
 });
 
+/*
+Наставник сказал оставить комментарий в коде, что тест проблемный и нужно проверять в ручную.
+
+Падают тесты: Обновление данных пользователя с полем about меньше 2 символов,
+Обновление данных пользователя с полем about больше 30 символов.
+
+Тест не проходит как только добавляю required, без него тест проходит.
+*/
 const updateUserProfileSchema = Joi.object({
   name: Joi.string().min(2).max(30).required(),
   about: Joi.string().min(2).max(30).required(),
