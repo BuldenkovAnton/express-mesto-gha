@@ -9,8 +9,9 @@ const { celebrate, Joi, errors } = require('celebrate');
 const { isUrlMethod } = require('./custom_rules/isUrlMethod');
 
 const { limiter } = require('./middlewares/limiter');
-const auth = require('./middlewares/auth');
+const { auth } = require('./middlewares/auth');
 const { handleError } = require('./middlewares/errors');
+const { signinSchema } = require('./middlewares/validator');
 
 const userRoutes = require('./routes/users');
 const cardRoutes = require('./routes/cards');
@@ -30,12 +31,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
-  }),
-}), login);
+app.post('/signin', celebrate({ body: signinSchema }), login);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
