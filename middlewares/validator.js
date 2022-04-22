@@ -44,8 +44,8 @@ const getUserByIdSchema = Joi.object({
 });
 
 const updateUserProfileSchema = Joi.object({
-  name: Joi.string().min(2).max(30),
-  about: Joi.string().min(2).max(30),
+  name: Joi.string().min(2).max(30).required(),
+  about: Joi.string().min(2).max(30).required(),
 });
 
 const updateUserAvatarSchema = Joi.object({
